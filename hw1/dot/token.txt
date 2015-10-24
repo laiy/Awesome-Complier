@@ -1,0 +1,38 @@
+所有可能的token：
+
+1. 关键词，大小写不敏感
+STRICT
+GRAPH
+DIGRAPH
+SUBGRAPH
+NODE
+EDGE
+
+2. Entity
+ID
+STRING
+NUMBER
+
+3. 分隔符
+;
+,
+{
+}
+[
+]
+
+4. 其它符号
+--
+->
+=
+
+5. WHITESPACE，忽略
+
+6. 注释，忽略
+//
+/* */
+#
+
+7. 作业无需支持的特性
+HTML_STRING
+:
