@@ -14,12 +14,12 @@ SPACE     [\ \n\t]
 
 {INTEGER} {
             num_num++;                          /*数字数加一*/
-            printf("(num = %d)\n", atoi(yytext)); /*打印数字值*/
+            printf("(num = %d)\n", atoi(yytext)); /*[>打印数字值<]*/
 }
 
 {ID}      {
             num_id++;                           /*ID数加一*/
-            printf("(id = %s)\n", yytext);        /*打印ID字符串*/
+            printf("(id = %s)\n", yytext);        /*[>打印ID字符串<]*/
 }
 
 {SPACE}|\. {}
