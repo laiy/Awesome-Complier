@@ -25,8 +25,8 @@ IPV4 ({VALID0_255}\.){3}{VALID0_255}
 }
 
 {IPV4}\n {
-    for (i = 0; i < yyleng - 1; i++)
-        s[i] += yytext[i];
+    for (i = 0; i < 4; i++)
+        s[i] = yytext[i];
     output_ip_type();
     yyless(yyleng - 1);
 }
@@ -37,8 +37,8 @@ IPV4 ({VALID0_255}\.){3}{VALID0_255}
 }
 
 \n{IPV4} {
-    for (i = 1; i < yyleng; i++)
-        s[i - 1] += yytext[i];
+    for (i = 1; i < 5; i++)
+        s[i - 1] = yytext[i];
     output_ip_type();
     yyless(yyleng - 1);
 }

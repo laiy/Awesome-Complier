@@ -860,8 +860,8 @@ case 3:
 YY_RULE_SETUP
 #line 27 "awesome_ipv4.l"
 {
-    for (i = 0; i < yyleng - 1; i++)
-        s[i] += yytext[i];
+    for (i = 0; i < 4; i++)
+        s[i] = yytext[i];
     output_ip_type();
     yyless(yyleng - 1);
 }
@@ -880,8 +880,8 @@ case 5:
 YY_RULE_SETUP
 #line 39 "awesome_ipv4.l"
 {
-    for (i = 1; i < yyleng; i++)
-        s[i - 1] += yytext[i];
+    for (i = 1; i < 5; i++)
+        s[i - 1] = yytext[i];
     output_ip_type();
     yyless(yyleng - 1);
 }
