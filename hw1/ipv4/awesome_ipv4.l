@@ -1,11 +1,9 @@
 %{
     #include <stdio.h>
-    #include <string>
-    #include <stdlib.h>
 
-    std::string s;
-    int length, i, l, temp;
-    void output_ip_type(std::string ip);
+    int i, base, temp;
+    char s[5];
+    void output_ip_type();
 %}
 
 OTHERS .*
@@ -15,10 +13,9 @@ IPV4 ({VALID0_255}\.){3}{VALID0_255}
 %%
 
 \n{IPV4}\n {
-    s = "";
-    for (i = 1; i < yyleng - 1; i++)
-        s += yytext[i];
-    output_ip_type(s);
+    for (i = 1; i < 5; i++)
+        s[i - 1] = yytext[i];
+    output_ip_type();
     yyless(yyleng - 1);
 }
 
@@ -28,10 +25,9 @@ IPV4 ({VALID0_255}\.){3}{VALID0_255}
 }
 
 {IPV4}\n {
-    s = "";
     for (i = 0; i < yyleng - 1; i++)
-        s += yytext[i];
-    output_ip_type(s);
+        s[i] += yytext[i];
+    output_ip_type();
     yyless(yyleng - 1);
 }
 
@@ -41,10 +37,9 @@ IPV4 ({VALID0_255}\.){3}{VALID0_255}
 }
 
 \n{IPV4} {
-    s = "";
     for (i = 1; i < yyleng; i++)
-        s += yytext[i];
-    output_ip_type(s);
+        s[i - 1] += yytext[i];
+    output_ip_type();
     yyless(yyleng - 1);
 }
 
@@ -55,14 +50,10 @@ IPV4 ({VALID0_255}\.){3}{VALID0_255}
 
 %%
 
-void output_ip_type(std::string ip) {
-    s = "";
-    length = ip.length();
-    l = 0, i = 0;
-    while (ip[i] != '.') i++;
-    for (; l < i; l++)
-        s += ip[l];
-    temp = atoi(s.c_str());
+void output_ip_type() {
+    base = 1, temp = 0;
+    for (i = 2; i >= 0; i--)
+        temp += (s[i] - '0') * base, base *= 10;
     if (temp <= 127)
         printf("A\n");
     else if (temp >= 128 && temp <= 191)

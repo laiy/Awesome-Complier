@@ -557,12 +557,11 @@ char *yytext;
 #line 1 "awesome_ipv4.l"
 #line 2 "awesome_ipv4.l"
     #include <stdio.h>
-    #include <stdlib.h>
 
-    std::string s;
-    int length, i, l, temp;
-    void output_ip_type(std::string ip);
-#line 566 "lex.yy.c"
+    int i, base, temp;
+    char s[5];
+    void output_ip_type();
+#line 565 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -776,10 +775,10 @@ YY_DECL
 		}
 
 	{
-#line 14 "awesome_ipv4.l"
+#line 13 "awesome_ipv4.l"
 
 
-#line 783 "lex.yy.c"
+#line 782 "lex.yy.c"
 
 	while ( 1 )		/* loops until end-of-file is reached */
 		{
@@ -839,19 +838,18 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 16 "awesome_ipv4.l"
+#line 15 "awesome_ipv4.l"
 {
-    s = "";
-    for (i = 1; i < yyleng - 1; i++)
-        s += yytext[i];
-    output_ip_type(s);
+    for (i = 1; i < 5; i++)
+        s[i - 1] = yytext[i];
+    output_ip_type();
     yyless(yyleng - 1);
 }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 24 "awesome_ipv4.l"
+#line 22 "awesome_ipv4.l"
 {
     printf("Invalid\n");
     yyless(yyleng - 1);
@@ -860,19 +858,18 @@ YY_RULE_SETUP
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 29 "awesome_ipv4.l"
+#line 27 "awesome_ipv4.l"
 {
-    s = "";
     for (i = 0; i < yyleng - 1; i++)
-        s += yytext[i];
-    output_ip_type(s);
+        s[i] += yytext[i];
+    output_ip_type();
     yyless(yyleng - 1);
 }
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 37 "awesome_ipv4.l"
+#line 34 "awesome_ipv4.l"
 {
     printf("Invalid\n");
     yyless(yyleng - 1);
@@ -881,19 +878,18 @@ YY_RULE_SETUP
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 42 "awesome_ipv4.l"
+#line 39 "awesome_ipv4.l"
 {
-    s = "";
     for (i = 1; i < yyleng; i++)
-        s += yytext[i];
-    output_ip_type(s);
+        s[i - 1] += yytext[i];
+    output_ip_type();
     yyless(yyleng - 1);
 }
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 50 "awesome_ipv4.l"
+#line 46 "awesome_ipv4.l"
 {
     printf("Invalid\n");
     yyless(yyleng - 1);
@@ -901,10 +897,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 55 "awesome_ipv4.l"
+#line 51 "awesome_ipv4.l"
 ECHO;
 	YY_BREAK
-#line 908 "lex.yy.c"
+#line 904 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1899,18 +1895,14 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 54 "awesome_ipv4.l"
+#line 50 "awesome_ipv4.l"
 
 
 
-void output_ip_type(std::string ip) {
-    s = "";
-    length = ip.length();
-    l = 0, i = 0;
-    while (ip[i] != '.') i++;
-    for (; l < i; l++)
-        s += ip[l];
-    temp = atoi(s.c_str());
+void output_ip_type() {
+    base = 1, temp = 0;
+    for (i = 2; i >= 0; i--)
+        temp += (s[i] - '0') * base, base *= 10;
     if (temp <= 127)
         printf("A\n");
     else if (temp >= 128 && temp <= 191)
