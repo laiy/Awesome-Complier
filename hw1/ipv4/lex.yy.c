@@ -883,24 +883,22 @@ YY_RULE_SETUP
     for (i = 1; i < 5; i++)
         s[i - 1] = yytext[i];
     output_ip_type();
-    yyless(yyleng - 1);
 }
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 46 "awesome_ipv4.l"
+#line 45 "awesome_ipv4.l"
 {
     printf("Invalid\n");
-    yyless(yyleng - 1);
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 51 "awesome_ipv4.l"
+#line 49 "awesome_ipv4.l"
 ECHO;
 	YY_BREAK
-#line 904 "lex.yy.c"
+#line 902 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1895,7 +1893,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 50 "awesome_ipv4.l"
+#line 48 "awesome_ipv4.l"
 
 
 

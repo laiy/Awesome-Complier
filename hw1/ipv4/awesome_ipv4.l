@@ -40,12 +40,10 @@ IPV4 ({VALID0_255}\.){3}{VALID0_255}
     for (i = 1; i < 5; i++)
         s[i - 1] = yytext[i];
     output_ip_type();
-    yyless(yyleng - 1);
 }
 
 \n{OTHERS} {
     printf("Invalid\n");
-    yyless(yyleng - 1);
 }
 
 %%
