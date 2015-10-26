@@ -20,6 +20,23 @@ digraph G {
 	a3 -> end;
 	b3 -> end;
 
+    // aklshjfkalsfjhaskljfhalksfhjasf
+    // asjfhfhkasfhaksfjhas
+    # shfdkajsfhaklsjfhaksfhjaskfjahsfhsf
+# digraph
+    // digraph
+    // sajfhasfsafa
+    # l
+
+    /*
+        shflkajshfkaljsfh
+        askfjhasklfjhasf
+        asklfjhasklfjhasf
+        safkljhaskfjhasf
+        assklfahlskf
+        asf21047129408ysfaf
+        */
+        // digraph
 	start [shape=Mdiamond,color=red,style=filled,fillcolor=red];
 	end [shape=Msquare,color=red,style=filled,fillcolor=red];
 }
