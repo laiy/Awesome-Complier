@@ -554,8 +554,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "awesome_ipv4.l"
-#line 2 "awesome_ipv4.l"
+#line 1 "ipv4.flex"
+#line 2 "ipv4.flex"
     #include <stdio.h>
 
     int i, base, temp;
@@ -775,7 +775,7 @@ YY_DECL
 		}
 
 	{
-#line 13 "awesome_ipv4.l"
+#line 13 "ipv4.flex"
 
 
 #line 782 "lex.yy.c"
@@ -838,7 +838,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 15 "awesome_ipv4.l"
+#line 15 "ipv4.flex"
 {
     for (i = 1; i < 5; i++)
         s[i - 1] = yytext[i];
@@ -849,7 +849,7 @@ YY_RULE_SETUP
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 22 "awesome_ipv4.l"
+#line 22 "ipv4.flex"
 {
     printf("Invalid\n");
     yyless(yyleng - 1);
@@ -858,7 +858,7 @@ YY_RULE_SETUP
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 27 "awesome_ipv4.l"
+#line 27 "ipv4.flex"
 {
     for (i = 0; i < 4; i++)
         s[i] = yytext[i];
@@ -869,7 +869,7 @@ YY_RULE_SETUP
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 34 "awesome_ipv4.l"
+#line 34 "ipv4.flex"
 {
     printf("Invalid\n");
     yyless(yyleng - 1);
@@ -878,7 +878,7 @@ YY_RULE_SETUP
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 39 "awesome_ipv4.l"
+#line 39 "ipv4.flex"
 {
     for (i = 1; i < 5; i++)
         s[i - 1] = yytext[i];
@@ -888,14 +888,14 @@ YY_RULE_SETUP
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 45 "awesome_ipv4.l"
+#line 45 "ipv4.flex"
 {
     printf("Invalid\n");
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 49 "awesome_ipv4.l"
+#line 49 "ipv4.flex"
 ECHO;
 	YY_BREAK
 #line 902 "lex.yy.c"
@@ -1893,7 +1893,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 48 "awesome_ipv4.l"
+#line 48 "ipv4.flex"
 
 
 

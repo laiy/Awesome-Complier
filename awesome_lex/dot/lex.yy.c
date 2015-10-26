@@ -502,8 +502,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "awesome_dot.l"
-#line 2 "awesome_dot.l"
+#line 1 "dot.flex"
+#line 2 "dot.flex"
     #include <stdio.h>
 #line 509 "lex.yy.c"
 
@@ -719,7 +719,7 @@ YY_DECL
 		}
 
 	{
-#line 14 "awesome_dot.l"
+#line 14 "dot.flex"
 
 
 #line 726 "lex.yy.c"
@@ -781,42 +781,42 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 16 "awesome_dot.l"
+#line 16 "dot.flex"
 {
     printf("%s\n", yytext);
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 20 "awesome_dot.l"
+#line 20 "dot.flex"
 {
     printf("%s\n", yytext);
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 24 "awesome_dot.l"
+#line 24 "dot.flex"
 {
     printf("%s\n", yytext);
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 28 "awesome_dot.l"
+#line 28 "dot.flex"
 {
     printf("%s\n", yytext);
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 32 "awesome_dot.l"
+#line 32 "dot.flex"
 {
     printf("%s\n", yytext);
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 36 "awesome_dot.l"
+#line 36 "dot.flex"
 {
     printf("%s\n", yytext);
 }
@@ -824,12 +824,12 @@ YY_RULE_SETUP
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
-#line 40 "awesome_dot.l"
+#line 40 "dot.flex"
 {}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 42 "awesome_dot.l"
+#line 42 "dot.flex"
 ECHO;
 	YY_BREAK
 #line 836 "lex.yy.c"
@@ -1827,7 +1827,8 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 41 "awesome_dot.l"
+#line 41 "dot.flex"
+
 
 
 
