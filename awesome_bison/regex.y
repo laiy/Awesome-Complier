@@ -11,7 +11,7 @@ static int nparen;
     int nparen;
 }
 
-%token	<c> CHAR EOL
+%token	<c> CHAR
 %type	<re> alt concat repeat single line
 %type	<nparen> count
 

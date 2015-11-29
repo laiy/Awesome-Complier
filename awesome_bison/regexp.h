@@ -4,6 +4,7 @@
 #include <stdarg.h>
 
 typedef struct Regexp Regexp;
+
 struct Regexp {
     int type;
     int n;
@@ -13,14 +14,7 @@ struct Regexp {
 };
 
 enum {
-    Alt = 1,
-    Cat,
-    Lit,
-    Dot,
-    Paren,
-    Quest,
-    Star,
-    Plus,
+    Alt = 1, Cat, Lit, Dot, Paren, Quest, Star, Plus
 };
 
 Regexp *reg(int type, Regexp *left, Regexp *right);

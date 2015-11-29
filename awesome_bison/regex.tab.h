@@ -45,8 +45,7 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    CHAR = 258,
-    EOL = 259
+    CHAR = 258
   };
 #endif
 
@@ -61,7 +60,7 @@ union YYSTYPE
     int c;
     int nparen;
 
-#line 65 "regex.tab.h" /* yacc.c:1909  */
+#line 64 "regex.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
