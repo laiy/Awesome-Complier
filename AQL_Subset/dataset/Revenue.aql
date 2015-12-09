@@ -1,0 +1,57 @@
+create view Number as
+	extract regex /[0-9]+(\.[0-9])?/
+		on D.text as number
+	from Document D;
+
+create view Unit as
+	extract regex /percent|billion|million|trillion/
+		on D.text as unit
+	from Document D;
+
+create view Money as 
+	extract pattern (/$?/) (<N.number>) (<U.unit>) 
+		return group 0 as money
+		   and group 1 as dollar
+		   and group 2 as number
+		   and group 3 as unit
+	from Currency C, Number N, Unit U;
+ 
+
+create view Revenue as
+	extract regex /revenues|revenue/ 
+		on D.text as revenue
+	from Document D;
+
+
+create view Division as 
+	extract regex /Global Technology Services|Systems and Technology|S&TG|Software|Global Financing|Global Business Services/  	
+		on R.text as division 
+	from Document R;  
+
+
+create view RevenueAndDivision as
+    extract pattern <R.revenue> <Token>{1,3} (<D.division>) <Token>{1,20} (<M.money>)
+    	return group 0 as RevenueAndDivision 
+       	   and group 1 as Division 
+       	   and group 2 as Amount
+    from Revenue R, Division D, Money M;
+
+create view RevenueAndDivision2 as
+    extract pattern (<D.division>) <Token>{1,3} <R.revenue> <Token>{1,20} (<M.money>)
+    	return group 0 as RevenueAndDivision 
+       	   and group 1 as Division 
+       	   and group 2 as Amount
+    from Revenue R, Division D, Money M;
+
+
+
+output view Number;
+output view Unit;
+output view Money;
+output view Revenue;
+output view Division;
+output view RevenueAndDivision;
+output view RevenueAndDivision2;
+
+
+
