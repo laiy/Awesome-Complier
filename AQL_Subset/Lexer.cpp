@@ -1,6 +1,5 @@
 #include <vector>
 #include <string>
-#include <functional>
 #include "Lexer.h"
 #include "Tokenizer.h"
 
@@ -11,7 +10,7 @@ Lexer::Lexer(char *file_path) {
     Tokenizer tokenizer = Tokenizer(file_path);
     std::vector<std::string> tokens = tokenizer.get_tokens();
     std::string buffer;
-    for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); it++)
+    for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); it++) {
         if (*it == "/") {
             buffer = "/";
             it = tokens.erase(it);
@@ -21,8 +20,8 @@ Lexer::Lexer(char *file_path) {
             it = tokens.erase(it);
             it = tokens.insert(it, buffer);
         }
-    for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); it++)
         this->tokens.push_back(get_token(*it));
+    }
 }
 
 std::vector<token> Lexer::get_tokens() {
