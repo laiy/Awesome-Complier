@@ -10,8 +10,19 @@ inline bool is_number(const std::string& s);
 Lexer::Lexer(char *file_path) {
     Tokenizer tokenizer = Tokenizer(file_path);
     std::vector<std::string> tokens = tokenizer.get_tokens();
-    for (int i = 0; (size_t)i < tokens.size(); i++)
-        this->tokens.push_back(get_token(tokens[i]));
+    std::string buffer;
+    for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); it++)
+        if (*it == "/") {
+            buffer = "/";
+            it = tokens.erase(it);
+            while (*it != "/")
+                buffer += *it, it = tokens.erase(it);
+            buffer += "/";
+            it = tokens.erase(it);
+            it = tokens.insert(it, buffer);
+        }
+    for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); it++)
+        this->tokens.push_back(get_token(*it));
 }
 
 std::vector<token> Lexer::get_tokens() {
@@ -22,6 +33,8 @@ inline token get_token(std::string str) {
     Type type;
     if (str == ".")
         type = DOT;
+    else if (str == ",")
+        type = COMMA;
     else if (str == "<")
         type = LESSTHAN;
     else if (str == ">")

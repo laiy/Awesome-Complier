@@ -21,7 +21,7 @@ Tokenizer::Tokenizer(char *file_path) {
                 buffer = "";
                 token_size_count = 0;
             }
-            if (c != ' ' && c != '\n' && c != '\r')
+            if (c != ' ' && c != '\n' && c != '\r' && c != '\t')
                 this->tokens.push_back(char_to_string(c));
         }
     }
