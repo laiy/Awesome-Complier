@@ -5,28 +5,6 @@
 #include <string>
 #include <cstdio>
 
-// struct span {
-    // std::string value;
-    // int from, to;
-// };
-
-// struct col {
-    // std::string name;
-    // std::vector<span> spans;
-// };
-
-// struct view {
-    // std::string name;
-    // std::vector<col> cols;
-// };
-
-// private:
-    // std::vector<token> lexer_tokens;
-    // std::vector<std::string> document_tokens;
-    // token look;
-    // int lexer_parser_pos;
-    // std::map<std::string, view> views;
-
 Parser::Parser(Lexer lexer, Tokenizer tokenizer) : lexer_tokens(lexer.get_tokens()),
     lexer_parser_pos(0), look(this->scan()), document_tokens(tokenizer.get_tokens()) {
         views.clear();
@@ -50,7 +28,9 @@ void Parser::error(std::string str) {
     exit(2);
 }
 
-void Parser::output_view(view v) {
+void Parser::output_view(view v, std::string alias_name) {
+    // output view with view and its alias
+    // if alias is EMPTY token means there is no name for the alias
     // todo
 }
 
@@ -67,6 +47,7 @@ void Parser::aql_stmt() {
     if (this->look.type == CREATE)
         this->create_stmt();
     this->output_stmt();
+    this->match(";");
 }
 
 void Parser::create_stmt() {
@@ -77,7 +58,9 @@ void Parser::create_stmt() {
     this->match("as");
     std::vector<col> view_cols = this->view_stmt();
     // create view with name and cols
-    // todo
+    view v = view(view_name);
+    v.cols = view_cols;
+    this->views[view_name] = v;
 }
 
 std::vector<col>& Parser::view_stmt() {
@@ -92,9 +75,7 @@ void Parser::output_stmt() {
     std::string output_view_name = this->look.value;
     this->look = this->scan();
     token alias_name = this->alias();
-    // output view with view name and its alias
-    // if alias is EMPTY token means there is no name for the alias
-    // todo
+    output_view(this->views[output_view_name], alias_name);
 }
 
 token Parser::alias() {

@@ -17,18 +17,16 @@ struct span {
 struct col {
     std::string name;
     std::vector<span> spans;
-    col(std::string name, std::vector<span> spans) {
+    col(std::string name) {
         this->name = name;
-        this->spans = spans;
     }
 };
 
 struct view {
     std::string name;
     std::vector<col> cols;
-    view(std::string name, std::vector<col> cols) {
+    view(std::string name) {
         this->name = name;
-        this->cols = cols;
     }
 };
 
@@ -38,7 +36,7 @@ class Parser {
         token scan();
         void match(std::string);
         void error(std::string str);
-        void output_view(view v);
+        void output_view(view v, std::string alias_name);
         void program();
         void aql_stmt();
         void create_stmt();
