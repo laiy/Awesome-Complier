@@ -7,12 +7,12 @@
 
 Parser::Parser(Lexer lexer, Tokenizer tokenizer) : lexer_tokens(lexer.get_tokens()),
     lexer_parser_pos(0), look(this->scan()), document_tokens(tokenizer.get_tokens()) {
-        views.clear();
+        this->views.clear();
 }
 
 token Parser::scan() {
-    if ((size_t)lexer_parser_pos < lexer_tokens.size())
-        return lexer_tokens[lexer_parser_pos++];
+    if ((size_t)this->lexer_parser_pos < this->lexer_tokens.size())
+        return this->lexer_tokens[this->lexer_parser_pos++];
     return token("", END);
 }
 
