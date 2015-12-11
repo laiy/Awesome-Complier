@@ -10,6 +10,8 @@ class Tokenizer {
 };
 
 inline bool is_digit(char c);
+
 inline bool is_letter(char c);
+
 inline std::string char_to_string(char c);
 

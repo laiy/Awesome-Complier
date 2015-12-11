@@ -28,5 +28,6 @@ class Lexer {
 };
 
 inline token get_token(std::string str);
+
 inline bool is_number(const std::string& s);
 

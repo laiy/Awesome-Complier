@@ -59,6 +59,8 @@ class Parser {
         std::vector<token> pattern_pkg();
         std::vector<token> atom();
         std::vector<token> pattern_group();
+        inline col get_col(view v, std::string col_name);
+        inline view get_view(std::string view_name);
     private:
         std::vector<token> lexer_tokens;
         int lexer_parser_pos;

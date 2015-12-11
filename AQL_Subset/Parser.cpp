@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <iostream>
 #include <cstdlib>
+#include <hash_map>
 
 Parser::Parser(Lexer lexer, Tokenizer tokenizer) : lexer_tokens(lexer.get_tokens()),
     lexer_parser_pos(0), look(this->scan()), document_tokens(tokenizer.get_tokens()) {
@@ -101,6 +102,13 @@ std::vector<col> Parser::select_stmt() {
     std::vector<token> from_list_v = this->from_list();
     // create cols with select_list_v and from_list_v and return a vector<col>
     // todo
+    std::vector<col> select_stmt_col_v;
+    __gnu_cxx::hash_map<std::string, std::string> temp_to_origin_view_name;
+    for (int i = 0; (size_t)i < from_list_v.size(); i += 2)
+        temp_to_origin_view_name[from_list_v[i + 1].value] = from_list_v[i].value;
+    for (int i = 0; (size_t)i < select_list_v.size(); i += 3)
+        select_stmt_col_v.push_back(this->get_col(this->get_view(temp_to_origin_view_name[select_list_v[i].value]), select_list_v[i + 1].value));
+    return select_stmt_col_v;
 }
 
 std::vector<token> Parser::select_list() {
@@ -280,5 +288,17 @@ std::vector<token> Parser::pattern_group() {
     std::vector<token> pattern_group_v = this->pattern_expr();
     this->match(")");
     return pattern_group_v;
+}
+
+inline col Parser::get_col(view v, std::string col_name) {
+    for (int i = 0; (size_t)i < v.cols.size(); i++)
+        if (v.cols[i].name == col_name)
+            return v.cols[i];
+}
+
+inline view Parser::get_view(std::string view_name) {
+    for (int i = 0; (size_t)i < this->views.size(); i++)
+        if (views[i].name == view_name)
+            return views[i];
 }
 
