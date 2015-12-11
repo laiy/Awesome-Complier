@@ -5,10 +5,18 @@
 #include <iostream>
 #include <cstdlib>
 #include <hash_map>
+#include <cstring>
+
+inline std::string char_to_string(char *content);
 
 Parser::Parser(Lexer lexer, Tokenizer tokenizer) : lexer_tokens(lexer.get_tokens()),
     lexer_parser_pos(0), look(this->scan()), document_tokens(tokenizer.get_tokens()) {
-        this->views.clear();
+        view v = view("Document");
+        col c = col("text");
+        span s = span(char_to_string(lexer.get_text()), 0, strlen(lexer.get_text()) - 1);
+        c.spans.push_back(s);
+        v.cols.push_back(c);
+        this->views.push_back(v);
 }
 
 token Parser::scan() {
@@ -164,6 +172,15 @@ std::vector<col> Parser::extract_stmt() {
     std::vector<token> from_list_v = this->from_list();
     // create cols and return vector<col>
     // todo
+    __gnu_cxx::hash_map<std::string, std::string> temp_to_origin_view_name;
+    for (int i = 0; (size_t)i < from_list_v.size(); i += 2)
+        temp_to_origin_view_name[from_list_v[i + 1].value] = from_list_v[i].value;
+    if (extract_spec_v[0].type == EMPTY) {
+        std::string reg = extract_spec_v[1].value;
+        col col_to_exec = this->get_col(this->get_view(temp_to_origin_view_name[extract_spec_v[2].value]), extract_spec_v[3].value);
+        std::string col_name = (extract_spec_v.size() == 5) ? extract_spec_v[4].value : extract_spec_v[5].value;
+    } else {
+    }
 }
 
 std::vector<token> Parser::extract_spec() {
@@ -300,5 +317,12 @@ inline view Parser::get_view(std::string view_name) {
     for (int i = 0; (size_t)i < this->views.size(); i++)
         if (views[i].name == view_name)
             return views[i];
+}
+
+inline std::string char_to_string(char *content) {
+    std::string result;
+    for (int i = 0; (size_t)i < strlen(content); i++)
+        result += content[i];
+    return result;
 }
 
