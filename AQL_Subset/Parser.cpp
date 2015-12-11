@@ -89,8 +89,8 @@ void Parser::output_stmt() {
 
 token Parser::alias() {
     if (this->look.type == AS) {
-        token t = look;
         this->match("as");
+        token t = this->look;
         this->look = this->scan();
         return t;
     } else {
