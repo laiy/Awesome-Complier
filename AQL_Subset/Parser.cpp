@@ -1,9 +1,9 @@
-#include "Lexer.h"
-#include "Tokenizer.h"
 #include "Parser.h"
 #include <vector>
 #include <string>
 #include <cstdio>
+#include <iostream>
+#include <cstdlib>
 
 Parser::Parser(Lexer lexer, Tokenizer tokenizer) : lexer_tokens(lexer.get_tokens()),
     lexer_parser_pos(0), look(this->scan()), document_tokens(tokenizer.get_tokens()) {
@@ -11,7 +11,7 @@ Parser::Parser(Lexer lexer, Tokenizer tokenizer) : lexer_tokens(lexer.get_tokens
 }
 
 token Parser::scan() {
-    if (lexer_parser_pos < lexer_tokens.size())
+    if ((size_t)lexer_parser_pos < lexer_tokens.size())
         return lexer_tokens[lexer_parser_pos++];
     return token("", END);
 }
@@ -20,7 +20,7 @@ void Parser::match(std::string str) {
     if (this->look == get_token(str))
         this->look = this->scan();
     else
-        this->error("match failed.");
+        std::cout << "str:" << str << "look:" << this->look.value << "\n", this->error("match failed.");
 }
 
 void Parser::error(std::string str) {
@@ -32,6 +32,7 @@ void Parser::output_view(view v, std::string alias_name) {
     // output view with view and its alias
     // if alias is EMPTY token means there is no name for the alias
     // todo
+    std::cout << "output view: " << v.name << " " << alias_name << "\n";
 }
 
 void Parser::program() {
@@ -46,7 +47,8 @@ void Parser::program() {
 void Parser::aql_stmt() {
     if (this->look.type == CREATE)
         this->create_stmt();
-    this->output_stmt();
+    else
+        this->output_stmt();
     this->match(";");
 }
 
@@ -60,13 +62,16 @@ void Parser::create_stmt() {
     // create view with name and cols
     view v = view(view_name);
     v.cols = view_cols;
-    this->views[view_name] = v;
+    this->views.push_back(v);
+
+    std::cout << "view name:" << view_name << "\n";
 }
 
-std::vector<col>& Parser::view_stmt() {
+std::vector<col> Parser::view_stmt() {
     if (this->look.type == SELECT)
         return this->select_stmt();
-    return this->extract_stmt();
+    else
+        return this->extract_stmt();
 }
 
 void Parser::output_stmt() {
@@ -75,7 +80,11 @@ void Parser::output_stmt() {
     std::string output_view_name = this->look.value;
     this->look = this->scan();
     token alias_name = this->alias();
-    output_view(this->views[output_view_name], alias_name);
+    for (int i = 0; (size_t)i < this->views.size(); i++)
+        if (this->views[i].name == output_view_name) {
+            output_view(this->views[i], alias_name.value);
+            break;
+        }
 }
 
 token Parser::alias() {
@@ -98,6 +107,18 @@ std::vector<col> Parser::select_stmt() {
     // repeat: ID ID
     // create cols with select_list_v and from_list_v and return a vector<col>
     // todo
+    std::cout << "select_list_v:";
+    for (int i = 0; (size_t)i < select_list_v.size(); i++)
+        std::cout << " " << select_list_v[i].value;
+    std::cout << "\n";
+    std::cout << "from_list_v:";
+    for (int i = 0; (size_t)i < from_list_v.size(); i++)
+        std::cout << " " << from_list_v[i].value;
+    std::cout << "\n";
+
+    // todo
+    std::vector<col> v;
+    return v;
 }
 
 std::vector<token> Parser::select_list() {
@@ -155,12 +176,25 @@ std::vector<col> Parser::extract_stmt() {
     std::vector<token> from_list_v = this->from_list();
     // create cols and return vector<col>
     // todo
+    std::cout << "extract_spec_v:";
+    for (int i = 0; (size_t)i < extract_spec_v.size(); i++)
+        std::cout << " " << extract_spec_v[i].value;
+    std::cout << "\n";
+    std::cout << "from_list_v:";
+    for (int i = 0; (size_t)i < from_list_v.size(); i++)
+        std::cout << " " << from_list_v[i].value;
+    std::cout << "\n";
+
+    //todo
+    std::vector<col> v;
+    return v;
 }
 
 std::vector<token> Parser::extract_spec() {
     if (this->look.type == REGEX)
         return this->regex_spec();
-    return this->pattern_expr();
+    else
+        return this->pattern_spec();
 }
 
 std::vector<token> Parser::regex_spec() {
@@ -204,7 +238,7 @@ std::vector<token> Parser::group_spec() {
     while (true) {
         std::vector<token> single_group_v = this->single_group();
         group_spec_v.insert(group_spec_v.end(), single_group_v.begin(), single_group_v.end());
-        if (this->look.type == END)
+        if (this->look.type == AND)
             this->match("and");
         else
             break;
@@ -227,9 +261,9 @@ std::vector<token> Parser::pattern_spec() {
     std::vector<token> pattern_spec_v;
     this->match("pattern");
     std::vector<token> pattern_expr_v = this->pattern_expr();
-    pattern_spec_v.insert(pattern_spec.end(), pattern_expr_v.begin(), pattern_expr_v.end());
+    pattern_spec_v.insert(pattern_spec_v.end(), pattern_expr_v.begin(), pattern_expr_v.end());
     std::vector<token> name_spec_v = this->name_spec();
-    pattern_spec_v.insert(pattern_spec.end(), name_spec_v.begin(), name_spec_v.end());
+    pattern_spec_v.insert(pattern_spec_v.end(), name_spec_v.begin(), name_spec_v.end());
     return pattern_spec_v;
 }
 
@@ -238,7 +272,7 @@ std::vector<token> Parser::pattern_expr() {
     while (true) {
         std::vector<token> pattern_pkg_v = this->pattern_pkg();
         pattern_expr_v.insert(pattern_expr_v.end(), pattern_pkg_v.begin(), pattern_pkg_v.end());
-        if (this->look.type == ID || this->look.type == TOKEN || this->look.type == REG)
+        if (this->look.type == LEFTBRACKET || this->look.type == TOKEN || this->look.type == REG || this->look.type == LESSTHAN)
             continue;
         else
             break;

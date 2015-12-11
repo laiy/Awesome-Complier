@@ -2,7 +2,6 @@
 #include "Tokenizer.h"
 #include <vector>
 #include <string>
-#include <map>
 
 struct span {
     std::string value;
@@ -40,7 +39,7 @@ class Parser {
         void program();
         void aql_stmt();
         void create_stmt();
-        std::vector<col>& view_stmt();
+        std::vector<col> view_stmt();
         void output_stmt();
         token alias();
         std::vector<col> select_stmt();
@@ -62,9 +61,9 @@ class Parser {
         std::vector<token> pattern_group();
     private:
         std::vector<token> lexer_tokens;
-        std::vector<std::string> document_tokens;
         int lexer_parser_pos;
         token look;
-        std::map<std::string, view> views;
+        std::vector<std::string> document_tokens;
+        std::vector<view> views;
 };
 
