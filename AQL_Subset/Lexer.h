@@ -4,7 +4,7 @@
 typedef enum {
     CREATE, VIEW, AS, OUTPUT, SELECT, FROM, EXTRACT, REGEX, ON, RETURN,
     GROUP, AND, TOKEN, PATTERN, ID, DOT, REG, NUM, LESSTHAN, GREATERTHAN,
-    LEFTBRACKET, RIGHTBRACKET, CURLYLEFTBRACKET, CURLYRIGHTBRACKET, SEMICOLON, COMMA
+    LEFTBRACKET, RIGHTBRACKET, CURLYLEFTBRACKET, CURLYRIGHTBRACKET, SEMICOLON, COMMA, END, EMPTY
 } Type;
 
 struct token {
@@ -13,6 +13,9 @@ struct token {
     token(std::string value, Type type) {
         this->value = value;
         this->type = type;
+    }
+    bool operator==(const token &t) const {
+        return this->value == t.value && this->type == t.type;
     }
 };
 
@@ -23,4 +26,7 @@ class Lexer {
     private:
         std::vector<token> tokens;
 };
+
+inline token get_token(std::string);
+inline bool is_number(const std::string& s);
 

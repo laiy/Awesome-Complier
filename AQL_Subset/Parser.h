@@ -7,16 +7,29 @@
 struct span {
     std::string value;
     int from, to;
+    span(std::string value, int from, int to) {
+        this->value = value;
+        this->from = from;
+        this->to = to;
+    }
 };
 
 struct col {
     std::string name;
     std::vector<span> spans;
+    col(std::string name, std::vector<span> spans) {
+        this->name = name;
+        this->spans = spans;
+    }
 };
 
 struct view {
     std::string name;
     std::vector<col> cols;
+    view(std::string name, std::vector<col> cols) {
+        this->name = name;
+        this->cols = cols;
+    }
 };
 
 class Parser {
@@ -25,38 +38,35 @@ class Parser {
         token scan();
         void match(std::string);
         void error(std::string str);
-        void create_view(std::string name, std::vector<col> cols);
-        void create_col(std::string name, std::vector<span> spans);
-        void create_span(std::string value, int from, int to);
         void output_view(view v);
         void program();
         void aql_stmt();
         void create_stmt();
-        void view_stmt();
+        std::vector<col>& view_stmt();
         void output_stmt();
-        void alias();
-        void select_stmt();
-        void select_list();
-        void select_item();
-        void from_list();
-        void from_item();
-        void extract_stmt();
-        void extract_spec();
-        void regex_spec();
-        void column();
-        void name_spec();
-        void group_spec();
-        void single_group();
-        void pattern_spec();
-        void pattern_expr();
-        void pattern_pkg();
-        void atom();
-        void pattern_group();
+        token alias();
+        std::vector<col>& select_stmt();
+        std::vector<token>& select_list();
+        std::vector<token>& select_item();
+        std::vector<token>& from_list();
+        std::vector<token>& from_item();
+        std::vector<col>& extract_stmt();
+        std::vector<token>& extract_spec();
+        std::vector<token>& regex_spec();
+        std::vector<token>& column();
+        std::vector<token>& name_spec();
+        std::vector<token>& group_spec();
+        std::vector<token>& single_group();
+        std::vector<token>& pattern_spec();
+        std::vector<token>& pattern_expr();
+        std::vector<token>& pattern_pkg();
+        std::vector<token>& atom();
+        std::vector<token>& pattern_group();
     private:
         std::vector<token> lexer_tokens;
         std::vector<std::string> document_tokens;
-        token look;
         int lexer_parser_pos;
+        token look;
         std::map<std::string, view> views;
 };
 

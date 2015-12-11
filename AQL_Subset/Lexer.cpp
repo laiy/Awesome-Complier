@@ -3,9 +3,6 @@
 #include "Lexer.h"
 #include "Tokenizer.h"
 
-inline token get_token(std::string);
-inline bool is_number(const std::string& s);
-
 Lexer::Lexer(char *file_path) {
     Tokenizer tokenizer = Tokenizer(file_path);
     std::vector<std::string> tokens = tokenizer.get_tokens();
