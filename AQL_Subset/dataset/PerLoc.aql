@@ -23,7 +23,7 @@ create view Per as
   from Document D;
 
 create view PerLoc as
-  extract pattern (<P.Per>) <token>{1,2} (<L.Loc>)
+  extract pattern (<P.Per>) <Token>{1,2} (<L.Loc>)
   return group 0 as PerLoc
     and group 1 as Per
     and group 2 as Loc

@@ -14,7 +14,7 @@ create view Money as
 		   and group 1 as dollar
 		   and group 2 as number
 		   and group 3 as unit
-	from Currency C, Number N, Unit U;
+	from Number N, Unit U;
  
 
 create view Revenue as
