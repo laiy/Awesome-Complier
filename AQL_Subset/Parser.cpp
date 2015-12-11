@@ -20,7 +20,7 @@ void Parser::match(std::string str) {
     if (this->look == get_token(str))
         this->look = this->scan();
     else
-        std::cout << "str:" << str << "look:" << this->look.value << "\n", this->error("match failed.");
+        this->error("match failed.");
 }
 
 void Parser::error(std::string str) {
@@ -32,7 +32,6 @@ void Parser::output_view(view v, std::string alias_name) {
     // output view with view and its alias
     // if alias is EMPTY token means there is no name for the alias
     // todo
-    std::cout << "output view: " << v.name << " " << alias_name << "\n";
 }
 
 void Parser::program() {
@@ -59,12 +58,9 @@ void Parser::create_stmt() {
     this->look = this->scan();
     this->match("as");
     std::vector<col> view_cols = this->view_stmt();
-    // create view with name and cols
     view v = view(view_name);
     v.cols = view_cols;
     this->views.push_back(v);
-
-    std::cout << "view name:" << view_name << "\n";
 }
 
 std::vector<col> Parser::view_stmt() {
@@ -101,24 +97,10 @@ token Parser::alias() {
 std::vector<col> Parser::select_stmt() {
     this->match("select");
     std::vector<token> select_list_v = this->select_list();
-    // repeat: ID ID (ID or not) if not, insert an EMPTY token
     this->match("from");
     std::vector<token> from_list_v = this->from_list();
-    // repeat: ID ID
     // create cols with select_list_v and from_list_v and return a vector<col>
     // todo
-    std::cout << "select_list_v:";
-    for (int i = 0; (size_t)i < select_list_v.size(); i++)
-        std::cout << " " << select_list_v[i].value;
-    std::cout << "\n";
-    std::cout << "from_list_v:";
-    for (int i = 0; (size_t)i < from_list_v.size(); i++)
-        std::cout << " " << from_list_v[i].value;
-    std::cout << "\n";
-
-    // todo
-    std::vector<col> v;
-    return v;
 }
 
 std::vector<token> Parser::select_list() {
@@ -142,7 +124,6 @@ std::vector<token> Parser::select_item() {
     select_item_v.push_back(this->look);
     this->look = this->scan();
     select_item_v.push_back(this->alias());
-    // if not id3 is EMPTY token
     return select_item_v;
 }
 
@@ -171,23 +152,10 @@ std::vector<token> Parser::from_item() {
 std::vector<col> Parser::extract_stmt() {
     this->match("extract");
     std::vector<token> extract_spec_v = this->extract_spec();
-    // extract_spec[0] == EMPTY token -> regex_spec else pattern_spec
     this->match("from");
     std::vector<token> from_list_v = this->from_list();
     // create cols and return vector<col>
     // todo
-    std::cout << "extract_spec_v:";
-    for (int i = 0; (size_t)i < extract_spec_v.size(); i++)
-        std::cout << " " << extract_spec_v[i].value;
-    std::cout << "\n";
-    std::cout << "from_list_v:";
-    for (int i = 0; (size_t)i < from_list_v.size(); i++)
-        std::cout << " " << from_list_v[i].value;
-    std::cout << "\n";
-
-    //todo
-    std::vector<col> v;
-    return v;
 }
 
 std::vector<token> Parser::extract_spec() {
@@ -209,7 +177,6 @@ std::vector<token> Parser::regex_spec() {
     std::vector<token> name_spec_v = this->name_spec();
     regex_spec_v.insert(regex_spec_v.end(), name_spec_v.begin(), name_spec_v.end());
     return regex_spec_v;
-    // EMPTY + REG + column_v(ID ID) + name_spec_v
 }
 
 std::vector<token> Parser::column() {
@@ -229,8 +196,6 @@ std::vector<token> Parser::name_spec() {
     else
         this->match("return"), name_spec_v = this->group_spec();
     return name_spec_v;
-    // if as -> only 1 token
-    // else return group
 }
 
 std::vector<token> Parser::group_spec() {
@@ -263,6 +228,7 @@ std::vector<token> Parser::pattern_spec() {
     std::vector<token> pattern_expr_v = this->pattern_expr();
     pattern_spec_v.insert(pattern_spec_v.end(), pattern_expr_v.begin(), pattern_expr_v.end());
     std::vector<token> name_spec_v = this->name_spec();
+    pattern_spec_v.push_back(token("", EMPTY));
     pattern_spec_v.insert(pattern_spec_v.end(), name_spec_v.begin(), name_spec_v.end());
     return pattern_spec_v;
 }
