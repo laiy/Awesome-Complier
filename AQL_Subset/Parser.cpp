@@ -219,17 +219,9 @@ std::vector<col> Parser::extract_stmt() {
                 int min = atoi(extract_spec_v[look + 1].value.c_str()), max = atoi(extract_spec_v[look + 2].value.c_str());
                 std::string document = this->get_col(this->get_view("Document"), "text").spans[0].value;
                 col token_col = col("token");
-                for (int i = min; i <= max; i++) {
-                    for (int j = 0; (size_t)j + i <= this->document_tokens.size(); j++) {
-                        int left = this->document_tokens[j].from;
-                        int right = this->document_tokens[j + i - 1].to;
-                        while (document[left] == ' ')
-                            left--;
-                        while (document[right] == ' ')
-                            right++;
-                        token_col.spans.push_back(span("token", left, right));
-                    }
-                }
+                for (int i = min; i <= max; i++)
+                    for (int j = 0; (size_t)j + i <= this->document_tokens.size(); j++)
+                        token_col.spans.push_back(span("token", this->document_tokens[j].from, this->document_tokens[j + i - 1].to));
                 cols_to_exec.push_back(token_col);
                 look += 3;
             } else if (extract_spec_v[look].type == REG) {
@@ -250,8 +242,12 @@ std::vector<col> Parser::extract_stmt() {
             }
         }
         std::vector<record> r;
+        std::string document = this->get_col(this->get_view("Document"), "text").spans[0].value;
         for (int j = 0; (size_t)j < cols_to_exec[0].spans.size(); j++) {
-            record re = record(cols_to_exec[0].spans[j].to);
+            int temp = cols_to_exec[0].spans[j].to;
+            while (document[temp] == ' ')
+                temp++;
+            record re = record(temp);
             re.pos.push_back(j);
             r.push_back(re);
         }
@@ -260,7 +256,10 @@ std::vector<col> Parser::extract_stmt() {
             for (int j = 0; (size_t)j < cols_to_exec[i + 1].spans.size(); j++) {
                 for (int k = 0; (size_t)k < r.size(); k++) {
                     if (cols_to_exec[i + 1].spans[j].from == r[k].to) {
-                        record re = (record(cols_to_exec[i + 1].spans[j].to));
+                        int temp = cols_to_exec[i + 1].spans[j].to;
+                        while (document[temp] == ' ')
+                            temp++;
+                        record re = record(temp);
                         for (int t = 0; (size_t)t < r[k].pos.size(); t++)
                             re.pos.push_back(r[k].pos[t]);
                         re.pos.push_back(j);
