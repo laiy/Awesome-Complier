@@ -265,20 +265,34 @@ std::vector<col> Parser::extract_stmt() {
             r.clear();
             r.insert(r.end(), temp_record.begin(), temp_record.end());
         }
-        std::vector<col> pattern_col_v;
-        std::vector<col> group;
         look++;
-
+        std::vector<col> group;
+        if (extract_spec_v[look].type == ID)
+            group.push_back(col(extract_spec_v[look].value));
+        else {
+            while ((size_t)look < extract_spec_v.size())
+                group.push_back(col(extract_spec_v[look + 1].value)), look += 2;
+        }
+        for (int i = 0; (size_t)i < r.size(); i++) {
+            int group_count = 1;
+            std::string span_value;
+            for (int j = 0; (size_t)j < r[i].pos.size(); j++) {
+                span s = cols_to_exec[j].spans[r[i].pos[j]];
+                if (s.value == "token")
+                    continue;
+                else {
+                    span_value += s.value;
+                    if (cols_to_exec[j].name != "regex")
+                        group[group_count++].spans.push_back(s);
+                }
+            }
+            span left = cols_to_exec[0].spans[r[i].pos[0]];
+            span right = cols_to_exec[cols_to_exec.size() - 1].spans[r[i].pos[cols_to_exec.size() - 1]];
+            group[0].spans.push_back(span(span_value, left.from, right.to));
+        }
+        return group;
     }
 }
-// struct record {
-    // int to;
-    // std::vector<int> pos;
-    // record(int to) {
-        // this->to = to;
-    // }
-// };
-
 
 std::vector<token> Parser::extract_spec() {
     if (this->look.type == REGEX)
