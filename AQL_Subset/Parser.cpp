@@ -1,4 +1,5 @@
 #include "Parser.h"
+#include "regex.hpp"
 #include <vector>
 #include <string>
 #include <cstdio>
@@ -176,10 +177,25 @@ std::vector<col> Parser::extract_stmt() {
     for (int i = 0; (size_t)i < from_list_v.size(); i += 2)
         temp_to_origin_view_name[from_list_v[i + 1].value] = from_list_v[i].value;
     if (extract_spec_v[0].type == EMPTY) {
+        // regex
         std::string reg = extract_spec_v[1].value;
         col col_to_exec = this->get_col(this->get_view(temp_to_origin_view_name[extract_spec_v[2].value]), extract_spec_v[3].value);
         std::string col_name = (extract_spec_v.size() == 5) ? extract_spec_v[4].value : extract_spec_v[5].value;
+        std::string ducument = col_to_exec.spans[0].value;
+        std::vector< std::vector<int> > result = findall(reg.c_str(), ducument.c_str());
+        std::vector<col> regex_spec_col_v;
+        col regex_exec_result = col(col_name);
+        for (int i = 0; (size_t)i < result.size(); i++) {
+            std::string match;
+            for (int j = result[i][0]; j < result[i][1]; j++)
+                match += ducument[j];
+            regex_exec_result.spans.push_back(span(match, result[i][0], result[i][1]));
+        }
+        regex_spec_col_v.push_back(regex_exec_result);
+        return regex_spec_col_v;
     } else {
+        // pattern
+
     }
 }
 

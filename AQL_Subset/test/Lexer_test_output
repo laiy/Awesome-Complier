@@ -113,7 +113,7 @@ Per ID
 > GREATERTHAN
 ) RIGHTBRACKET
 < LESSTHAN
-token ID
+Token TOKEN
 > GREATERTHAN
 { CURLYLEFTBRACKET
 1 NUM
@@ -266,9 +266,6 @@ group GROUP
 as AS
 unit ID
 from FROM
-Currency ID
-C ID
-, COMMA
 Number ID
 N ID
 , COMMA

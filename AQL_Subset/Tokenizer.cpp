@@ -8,24 +8,26 @@ Tokenizer::Tokenizer(char *file_path) {
     int token_size_count = 0;
     char c;
     std::string buffer;
+    int pos = -1;
     while ((c = fgetc(original_document)) != EOF) {
+        pos++;
         if (is_digit(c) || is_letter(c))
             buffer += c, token_size_count++;
         else {
             if (token_size_count) {
-                this->tokens.push_back(buffer);
+                this->tokens.push_back(document_token(buffer, pos - buffer.length(), pos));
                 buffer = "";
                 token_size_count = 0;
             }
             if (c != ' ' && c != '\n' && c != '\r' && c != '\t')
-                this->tokens.push_back(char_to_string(c));
+                this->tokens.push_back(document_token(char_to_string(c), pos, pos + 1));
         }
     }
     if (token_size_count)
-        this->tokens.push_back(buffer);
+        pos++, this->tokens.push_back(document_token(buffer, pos - buffer.length(), pos));
 }
 
-std::vector<std::string> Tokenizer::get_tokens() {
+std::vector<document_token> Tokenizer::get_tokens() {
     return this->tokens;
 }
 

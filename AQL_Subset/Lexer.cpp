@@ -1,11 +1,15 @@
 #include <vector>
 #include <string>
+#include <cstdio>
 #include "Lexer.h"
 #include "Tokenizer.h"
 
 Lexer::Lexer(char *file_path) {
     Tokenizer tokenizer = Tokenizer(file_path);
-    std::vector<std::string> tokens = tokenizer.get_tokens();
+    std::vector<document_token> document_tokens = tokenizer.get_tokens();
+    std::vector<std::string> tokens;
+    for (int i = 0; (size_t)i < document_tokens.size(); i++)
+        tokens.push_back(document_tokens[i].value);
     std::string buffer;
     for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); it++) {
         if (*it == "/") {

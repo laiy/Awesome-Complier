@@ -65,7 +65,7 @@ class Parser {
         std::vector<token> lexer_tokens;
         int lexer_parser_pos;
         token look;
-        std::vector<std::string> document_tokens;
+        std::vector<document_token> document_tokens;
         std::vector<view> views;
 };
 
