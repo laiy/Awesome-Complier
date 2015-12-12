@@ -16,13 +16,11 @@ struct record {
     }
 };
 
-inline std::string char_to_string(char *content);
-
 Parser::Parser(Lexer lexer, Tokenizer tokenizer) : lexer_tokens(lexer.get_tokens()),
     lexer_parser_pos(0), look(this->scan()), document_tokens(tokenizer.get_tokens()) {
         view v = view("Document");
         col c = col("text");
-        span s = span(char_to_string(lexer.get_text()), 0, strlen(lexer.get_text()) - 1);
+        span s = span(tokenizer.get_text(), 0, tokenizer.get_text().length());
         c.spans.push_back(s);
         v.cols.push_back(c);
         this->views.push_back(v);
@@ -50,6 +48,13 @@ void Parser::output_view(view v, std::string alias_name) {
     // output view with view and its alias
     // if alias is EMPTY token means there is no name for the alias
     // todo
+    std::cout << "view: " << v.name << std::endl;
+    for (int i = 0; (size_t)i < v.cols.size(); i++) {
+        std::cout << "    col: " << v.cols[i].name << std::endl;
+        for (int j = 0; (size_t)j < v.cols[i].spans.size(); j++) {
+            std::cout << "        spans: " << v.cols[i].spans[j].value << "from: " << v.cols[i].spans[j].from << "to: " << v.cols[i].spans[j].to << std::endl;
+        }
+    }
 }
 
 void Parser::program() {
@@ -186,7 +191,7 @@ std::vector<col> Parser::extract_stmt() {
         temp_to_origin_view_name[from_list_v[i + 1].value] = from_list_v[i].value;
     if (extract_spec_v[0].type == EMPTY) {
         // regex
-        std::string reg = extract_spec_v[1].value;
+        std::string reg = extract_spec_v[1].value.substr(1, extract_spec_v[1].value.length() - 2);
         col col_to_exec = this->get_col(this->get_view(temp_to_origin_view_name[extract_spec_v[2].value]), extract_spec_v[3].value);
         std::string col_name = (extract_spec_v.size() == 5) ? extract_spec_v[4].value : extract_spec_v[5].value;
         std::string document = col_to_exec.spans[0].value;
@@ -221,14 +226,14 @@ std::vector<col> Parser::extract_stmt() {
                         while (document[left] == ' ')
                             left--;
                         while (document[right] == ' ')
-                            left++;
+                            right++;
                         token_col.spans.push_back(span("token", left, right));
                     }
                 }
                 cols_to_exec.push_back(token_col);
                 look += 3;
             } else if (extract_spec_v[look].type == REG) {
-                std::string reg = extract_spec_v[look].value;
+                std::string reg = extract_spec_v[look].value.substr(1, extract_spec_v[look].value.length() - 2);
                 std::string document = this->get_col(this->get_view("Document"), "text").spans[0].value;
                 std::vector< std::vector<int> > result = findall(reg.c_str(), document.c_str());
                 col regex_exec_result = col("regex");
@@ -239,6 +244,7 @@ std::vector<col> Parser::extract_stmt() {
                     regex_exec_result.spans.push_back(span(match, result[i][0], result[i][1]));
                 }
                 cols_to_exec.push_back(regex_exec_result);
+                look++;
             } else {
                 this->error("pattern match failed.");
             }
@@ -426,14 +432,7 @@ inline col Parser::get_col(view v, std::string col_name) {
 
 inline view Parser::get_view(std::string view_name) {
     for (int i = 0; (size_t)i < this->views.size(); i++)
-        if (views[i].name == view_name)
-            return views[i];
-}
-
-inline std::string char_to_string(char *content) {
-    std::string result;
-    for (int i = 0; (size_t)i < strlen(content); i++)
-        result += content[i];
-    return result;
+        if (this->views[i].name == view_name)
+            return this->views[i];
 }
 

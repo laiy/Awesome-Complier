@@ -1,6 +1,8 @@
 #include <vector>
 #include <string>
 
+#define MAX_LEN 10000000
+
 struct document_token {
     std::string value;
     int from, to;
@@ -15,8 +17,10 @@ class Tokenizer {
     public:
         Tokenizer(char *file_path);
         std::vector<document_token> get_tokens();
+        std::string get_text();
     private:
         std::vector<document_token> tokens;
+        std::string content;
 };
 
 inline bool is_digit(char c);

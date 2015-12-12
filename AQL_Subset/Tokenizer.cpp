@@ -5,12 +5,13 @@
 
 Tokenizer::Tokenizer(char *file_path) {
     FILE *original_document = fopen(file_path, "r");
-    int token_size_count = 0;
+    int token_size_count = 0, pos = -1;
     char c;
     std::string buffer;
-    int pos = -1;
+    this->content = "";
     while ((c = fgetc(original_document)) != EOF) {
         pos++;
+        this->content += c;
         if (is_digit(c) || is_letter(c))
             buffer += c, token_size_count++;
         else {
@@ -29,6 +30,10 @@ Tokenizer::Tokenizer(char *file_path) {
 
 std::vector<document_token> Tokenizer::get_tokens() {
     return this->tokens;
+}
+
+std::string Tokenizer::get_text() {
+    return this->content;
 }
 
 inline bool is_digit(char c) {

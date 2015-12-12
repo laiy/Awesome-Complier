@@ -23,8 +23,6 @@ Lexer::Lexer(char *file_path) {
         }
         this->tokens.push_back(get_token(*it));
     }
-    FILE *original_document = fopen(file_path, "r");
-    fgets(this->content, MAX_LEN, original_document);
 }
 
 std::vector<token> Lexer::get_tokens() {
@@ -86,10 +84,6 @@ inline token get_token(std::string str) {
     else
         type = ID;
     return token(str, type);
-}
-
-char* Lexer::get_text() {
-    return this->content;
 }
 
 inline bool is_number(const std::string& s) {
