@@ -5,8 +5,16 @@
 #include <cstdio>
 #include <iostream>
 #include <cstdlib>
-#include <hash_map>
+#include <map>
 #include <cstring>
+
+struct record {
+    int to;
+    std::vector<int> pos;
+    record(int to) {
+        this->to = to;
+    }
+};
 
 inline std::string char_to_string(char *content);
 
@@ -112,7 +120,7 @@ std::vector<col> Parser::select_stmt() {
     // create cols with select_list_v and from_list_v and return a vector<col>
     // todo
     std::vector<col> select_stmt_col_v;
-    __gnu_cxx::hash_map<std::string, std::string> temp_to_origin_view_name;
+    std::map<std::string, std::string> temp_to_origin_view_name;
     for (int i = 0; (size_t)i < from_list_v.size(); i += 2)
         temp_to_origin_view_name[from_list_v[i + 1].value] = from_list_v[i].value;
     for (int i = 0; (size_t)i < select_list_v.size(); i += 3)
@@ -173,7 +181,7 @@ std::vector<col> Parser::extract_stmt() {
     std::vector<token> from_list_v = this->from_list();
     // create cols and return vector<col>
     // todo
-    __gnu_cxx::hash_map<std::string, std::string> temp_to_origin_view_name;
+    std::map<std::string, std::string> temp_to_origin_view_name;
     for (int i = 0; (size_t)i < from_list_v.size(); i += 2)
         temp_to_origin_view_name[from_list_v[i + 1].value] = from_list_v[i].value;
     if (extract_spec_v[0].type == EMPTY) {
@@ -181,23 +189,96 @@ std::vector<col> Parser::extract_stmt() {
         std::string reg = extract_spec_v[1].value;
         col col_to_exec = this->get_col(this->get_view(temp_to_origin_view_name[extract_spec_v[2].value]), extract_spec_v[3].value);
         std::string col_name = (extract_spec_v.size() == 5) ? extract_spec_v[4].value : extract_spec_v[5].value;
-        std::string ducument = col_to_exec.spans[0].value;
-        std::vector< std::vector<int> > result = findall(reg.c_str(), ducument.c_str());
+        std::string document = col_to_exec.spans[0].value;
+        std::vector< std::vector<int> > result = findall(reg.c_str(), document.c_str());
         std::vector<col> regex_spec_col_v;
         col regex_exec_result = col(col_name);
         for (int i = 0; (size_t)i < result.size(); i++) {
             std::string match;
             for (int j = result[i][0]; j < result[i][1]; j++)
-                match += ducument[j];
+                match += document[j];
             regex_exec_result.spans.push_back(span(match, result[i][0], result[i][1]));
         }
         regex_spec_col_v.push_back(regex_exec_result);
         return regex_spec_col_v;
     } else {
         // pattern
+        int look = 0;
+        std::vector<col> cols_to_exec;
+        while (extract_spec_v[look].type != EMPTY) {
+            if (extract_spec_v[look].type == ID) {
+                col c = this->get_col(this->get_view(temp_to_origin_view_name[extract_spec_v[look].value]), extract_spec_v[look + 1].value);
+                cols_to_exec.push_back(c);
+                look += 2;
+            } else if (extract_spec_v[look].type == TOKEN) {
+                int min = atoi(extract_spec_v[look + 1].value.c_str()), max = atoi(extract_spec_v[look + 2].value.c_str());
+                std::string document = this->get_col(this->get_view("Document"), "text").spans[0].value;
+                col token_col = col("token");
+                for (int i = min; i <= max; i++) {
+                    for (int j = 0; (size_t)j + i <= this->document_tokens.size(); j++) {
+                        int left = this->document_tokens[j].from;
+                        int right = this->document_tokens[j + i - 1].to;
+                        while (document[left] == ' ')
+                            left--;
+                        while (document[right] == ' ')
+                            left++;
+                        token_col.spans.push_back(span("token", left, right));
+                    }
+                }
+                cols_to_exec.push_back(token_col);
+                look += 3;
+            } else if (extract_spec_v[look].type == REG) {
+                std::string reg = extract_spec_v[look].value;
+                std::string document = this->get_col(this->get_view("Document"), "text").spans[0].value;
+                std::vector< std::vector<int> > result = findall(reg.c_str(), document.c_str());
+                col regex_exec_result = col("regex");
+                for (int i = 0; (size_t)i < result.size(); i++) {
+                    std::string match;
+                    for (int j = result[i][0]; j < result[i][1]; j++)
+                        match += document[j];
+                    regex_exec_result.spans.push_back(span(match, result[i][0], result[i][1]));
+                }
+                cols_to_exec.push_back(regex_exec_result);
+            } else {
+                this->error("pattern match failed.");
+            }
+        }
+        std::vector<record> r;
+        for (int j = 0; (size_t)j < cols_to_exec[0].spans.size(); j++) {
+            record re = record(cols_to_exec[0].spans[j].to);
+            re.pos.push_back(j);
+            r.push_back(re);
+        }
+        for (int i = 0; (size_t)i < cols_to_exec.size() - 1; i++) {
+            std::vector<record> temp_record;
+            for (int j = 0; (size_t)j < cols_to_exec[i + 1].spans.size(); j++) {
+                for (int k = 0; (size_t)k < r.size(); k++) {
+                    if (cols_to_exec[i + 1].spans[j].from == r[k].to) {
+                        record re = (record(cols_to_exec[i + 1].spans[j].to));
+                        for (int t = 0; (size_t)t < r[k].pos.size(); t++)
+                            re.pos.push_back(r[k].pos[t]);
+                        re.pos.push_back(j);
+                        temp_record.push_back(re);
+                    }
+                }
+            }
+            r.clear();
+            r.insert(r.end(), temp_record.begin(), temp_record.end());
+        }
+        std::vector<col> pattern_col_v;
+        std::vector<col> group;
+        look++;
 
     }
 }
+// struct record {
+    // int to;
+    // std::vector<int> pos;
+    // record(int to) {
+        // this->to = to;
+    // }
+// };
+
 
 std::vector<token> Parser::extract_spec() {
     if (this->look.type == REGEX)
