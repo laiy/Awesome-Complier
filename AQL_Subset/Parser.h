@@ -16,8 +16,10 @@ struct span {
 struct col {
     std::string name;
     std::vector<span> spans;
+    bool is_grouped;
     col(std::string name) {
         this->name = name;
+        this->is_grouped = false;
     }
 };
 

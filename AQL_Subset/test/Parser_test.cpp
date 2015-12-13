@@ -3,7 +3,7 @@
 
 int main() {
     char perloc_aql_file_path[] = "../dataset/PerLoc.aql";
-    char revenue_aql_file_path[] = "../dataset/Revenue.aql";
+    char revenue_aql_file_path[] = "../dataset/Revenue_test.aql";
     Lexer perloc_lexer = Lexer(perloc_aql_file_path);
     Lexer revenue_lexer = Lexer(revenue_aql_file_path);
     char Perloc[] = "../dataset/perloc/PerLoc.input";

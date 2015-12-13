@@ -36,22 +36,12 @@ create view RevenueAndDivision as
        	   and group 2 as Amount
     from Revenue R, Division D, Money M;
 
-create view RevenueAndDivision2 as
-    extract pattern (<D.division>) <Token>{1,3} <R.revenue> <Token>{1,20} (<M.money>)
-        return group 0 as RevenueAndDivision 
-       	   and group 1 as Division 
-       	   and group 2 as Amount
-    from Revenue R, Division D, Money M;
-
-
-
 output view Number;
 output view Unit;
 output view Money;
 output view Revenue;
 output view Division;
 output view RevenueAndDivision;
-output view RevenueAndDivision2;
 
 
 

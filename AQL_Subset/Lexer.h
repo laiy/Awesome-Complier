@@ -10,9 +10,11 @@ typedef enum {
 struct token {
     std::string value;
     Type type;
+    bool is_grouped;
     token(std::string value, Type type) {
         this->value = value;
         this->type = type;
+        this->is_grouped = false;
     }
     bool operator==(const token &t) const {
         return this->value == t.value && this->type == t.type;

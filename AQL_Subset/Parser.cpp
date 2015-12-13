@@ -67,6 +67,7 @@ void Parser::program() {
 }
 
 void Parser::aql_stmt() {
+    printf("testaqlstmt\n");
     if (this->look.type == CREATE)
         this->create_stmt();
     else
@@ -213,6 +214,8 @@ std::vector<col> Parser::extract_stmt() {
         while (extract_spec_v[look].type != EMPTY) {
             if (extract_spec_v[look].type == ID) {
                 col c = this->get_col(this->get_view(temp_to_origin_view_name[extract_spec_v[look].value]), extract_spec_v[look + 1].value);
+                if (extract_spec_v[look].is_grouped)
+                    c.is_grouped = true;
                 cols_to_exec.push_back(c);
                 look += 2;
             } else if (extract_spec_v[look].type == TOKEN) {
@@ -235,6 +238,8 @@ std::vector<col> Parser::extract_stmt() {
                         match += document[j];
                     regex_exec_result.spans.push_back(span(match, result[i][0], result[i][1]));
                 }
+                if (extract_spec_v[look].is_grouped)
+                    regex_exec_result.is_grouped = true;
                 cols_to_exec.push_back(regex_exec_result);
                 look++;
             } else {
@@ -287,7 +292,7 @@ std::vector<col> Parser::extract_stmt() {
                     continue;
                 else {
                     span_value += s.value;
-                    if (cols_to_exec[j].name != "regex")
+                    if (cols_to_exec[j].is_grouped)
                         group[group_count++].spans.push_back(s);
                 }
             }
@@ -295,6 +300,8 @@ std::vector<col> Parser::extract_stmt() {
             span right = cols_to_exec[cols_to_exec.size() - 1].spans[r[i].pos[cols_to_exec.size() - 1]];
             group[0].spans.push_back(span(span_value, left.from, right.to));
         }
+        printf("pattern_return\n");
+        std::cout << group.size() << std::endl;
         return group;
     }
 }
@@ -420,6 +427,8 @@ std::vector<token> Parser::pattern_group() {
     this->match("(");
     std::vector<token> pattern_group_v = this->pattern_expr();
     this->match(")");
+    for (int i = 0; (size_t)i < pattern_group_v.size(); i++)
+        pattern_group_v[i].is_grouped = true;
     return pattern_group_v;
 }
 
