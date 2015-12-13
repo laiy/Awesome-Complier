@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <map>
 #include <cstring>
+#include <algorithm>
 
 struct record {
     int to;
@@ -16,7 +17,7 @@ struct record {
     }
 };
 
-Parser::Parser(Lexer lexer, Tokenizer tokenizer) : lexer_tokens(lexer.get_tokens()),
+Parser::Parser(Lexer lexer, Tokenizer tokenizer, const char *output_file, const char *processing) : lexer_tokens(lexer.get_tokens()),
     lexer_parser_pos(0), look(this->scan()), document_tokens(tokenizer.get_tokens()) {
         view v = view("Document");
         col c = col("text");
@@ -24,6 +25,12 @@ Parser::Parser(Lexer lexer, Tokenizer tokenizer) : lexer_tokens(lexer.get_tokens
         c.spans.push_back(s);
         v.cols.push_back(c);
         this->views.push_back(v);
+        this->output_file = fopen(output_file, "w+");
+        fprintf(this->output_file, "Processing %s\n", processing);
+}
+
+Parser::~Parser() {
+    fclose(this->output_file);
 }
 
 token Parser::scan() {
@@ -44,17 +51,24 @@ void Parser::error(std::string str) {
     exit(2);
 }
 
-void Parser::output_view(view v, std::string alias_name) {
-    // output view with view and its alias
-    // if alias is EMPTY token means there is no name for the alias
-    // todo
-    std::cout << "view: " << v.name << std::endl;
+void Parser::output_view(view v, token alias_name) {
+    fprintf(this->output_file, "View: %s\n", (alias_name.type == EMPTY) ? v.name.c_str() : alias_name.value.c_str());
+    // std::sort(v.cols.begin(), v.cols.end());
     for (int i = 0; (size_t)i < v.cols.size(); i++) {
-        std::cout << "    col: " << v.cols[i].name << std::endl;
+        int col_width = 0, temp;
         for (int j = 0; (size_t)j < v.cols[i].spans.size(); j++) {
-            std::cout << "        spans: " << v.cols[i].spans[j].value << "from: " << v.cols[i].spans[j].from << "to: " << v.cols[i].spans[j].to << std::endl;
+                temp = v.cols[i].spans[j].value.length() + 4 + std::to_string(v.cols[i].spans[j].from).length() + std::to_string(v.cols[i].spans[j].to).length();
+                if (temp > col_width)
+                    col_width = temp;
         }
+        v.cols[i].print_width = col_width;
     }
+    this->print_line(v);
+    this->print_col(v);
+    this->print_line(v);
+    this->print_span(v);
+    this->print_line(v);
+    fprintf(this->output_file, "%d rows in set\n\n", (int)v.cols[0].spans.size());
 }
 
 void Parser::program() {
@@ -101,7 +115,7 @@ void Parser::output_stmt() {
     token alias_name = this->alias();
     for (int i = 0; (size_t)i < this->views.size(); i++)
         if (this->views[i].name == output_view_name) {
-            output_view(this->views[i], alias_name.value);
+            output_view(this->views[i], alias_name);
             break;
         }
 }
@@ -427,5 +441,41 @@ inline view Parser::get_view(std::string view_name) {
     for (int i = 0; (size_t)i < this->views.size(); i++)
         if (this->views[i].name == view_name)
             return this->views[i];
+}
+
+inline void Parser::print_line(view &v) {
+    fputc('+', this->output_file);
+    for (int i = 0; (size_t)i < v.cols.size(); i++) {
+        for (int j = 0; j < v.cols[i].print_width + 2; j++)
+            fputc('-', this->output_file);
+        fputc('+', this->output_file);
+    }
+    fputc('\n', this->output_file);
+}
+
+inline void Parser::print_col(view &v) {
+    fputc('|', this->output_file);
+    for (int i = 0; (size_t)i < v.cols.size(); i++) {
+        fputc(' ', this->output_file);
+        fprintf(this->output_file, "%s", v.cols[i].name.c_str());
+        for (int j = 0; j < v.cols[i].print_width + 2 - (int)v.cols[i].name.length() - 1; j++)
+            fputc(' ', this->output_file);
+        fputc('|', this->output_file);
+    }
+    fputc('\n', this->output_file);
+}
+
+inline void Parser::print_span(view &v) {
+    for (int i = 0; (size_t)i < v.cols[0].spans.size(); i++) {
+        fputc('|', this->output_file);
+        for (int j = 0; (size_t)j < v.cols.size(); j++) {
+            fputc(' ', this->output_file);
+            fprintf(this->output_file, "%s:(%d,%d)", v.cols[j].spans[i].value.c_str(), v.cols[j].spans[i].from, v.cols[j].spans[i].to);
+            for (int k = 0; k < v.cols[j].print_width + 2 - 1 - (int)v.cols[j].spans[i].value.length() - 4 - (int)std::to_string(v.cols[j].spans[i].from).length() - (int)std::to_string(v.cols[j].spans[i].to).length(); k++)
+                fputc(' ', this->output_file);
+            fputc('|', this->output_file);
+        }
+        fputc('\n', this->output_file);
+    }
 }
 

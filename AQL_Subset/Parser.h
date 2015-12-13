@@ -17,9 +17,13 @@ struct col {
     std::string name;
     std::vector<span> spans;
     bool is_grouped;
+    int print_width;
     col(std::string name) {
         this->name = name;
         this->is_grouped = false;
+    }
+    bool operator<(const col &c) const {
+        return this->name < c.name;
     }
 };
 
@@ -33,11 +37,12 @@ struct view {
 
 class Parser {
     public:
-        Parser(Lexer lexer, Tokenizer tokenizer);
+        Parser(Lexer lexer, Tokenizer tokenizer, const char *output_file, const char *processing);
+        ~Parser();
         token scan();
         void match(std::string);
         void error(std::string str);
-        void output_view(view v, std::string alias_name);
+        void output_view(view v, token alias_name);
         void program();
         void aql_stmt();
         void create_stmt();
@@ -63,11 +68,15 @@ class Parser {
         std::vector<token> pattern_group();
         inline col get_col(view v, std::string col_name);
         inline view get_view(std::string view_name);
+        inline void print_line(view &v);
+        inline void print_col(view &v);
+        inline void print_span(view &v);
     private:
         std::vector<token> lexer_tokens;
         int lexer_parser_pos;
         token look;
         std::vector<document_token> document_tokens;
         std::vector<view> views;
+        FILE *output_file;
 };
 

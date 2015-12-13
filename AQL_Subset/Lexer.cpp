@@ -4,6 +4,9 @@
 #include "Lexer.h"
 #include "Tokenizer.h"
 
+token get_token(std::string str);
+inline bool is_number(const std::string& s);
+
 Lexer::Lexer(char *file_path) {
     Tokenizer tokenizer = Tokenizer(file_path);
     std::vector<document_token> document_tokens = tokenizer.get_tokens();
@@ -31,7 +34,7 @@ std::vector<token> Lexer::get_tokens() {
     return this->tokens;
 }
 
-inline token get_token(std::string str) {
+token get_token(std::string str) {
     Type type;
     if (str == ".")
         type = DOT;
