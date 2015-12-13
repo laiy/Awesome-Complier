@@ -196,10 +196,6 @@ std::vector<col> Parser::extract_stmt() {
         std::string col_name = (extract_spec_v.size() == 5) ? extract_spec_v[4].value : extract_spec_v[5].value;
         std::string document = col_to_exec.spans[0].value;
         std::vector< std::vector<int> > result = findall(reg.c_str(), document.c_str());
-
-        std::cout << "regex size: " << result.size() << std::endl;
-        std::cout << "regex: " << reg << std::endl;
-
         std::vector<col> regex_spec_col_v;
         col regex_exec_result = col(col_name);
         for (int i = 0; (size_t)i < result.size(); i++) {
@@ -289,19 +285,17 @@ std::vector<col> Parser::extract_stmt() {
         for (int i = 0; (size_t)i < r.size(); i++) {
             int group_count = 1;
             std::string span_value;
+            int last_to = -1;
             for (int j = 0; (size_t)j < r[i].pos.size(); j++) {
                 span s = cols_to_exec[j].spans[r[i].pos[j]];
-                if (s.value == "token")
-                    continue;
-                else {
-                    span_value += s.value;
-                    if (cols_to_exec[j].is_grouped)
-                        group[group_count++].spans.push_back(s);
-                }
+                if (last_to != -1)
+                    while (last_to != s.from)
+                        span_value += ' ', last_to++;
+                span_value += (s.value == "token") ? document.substr(s.from, s.to - s.from) : s.value, last_to = s.to;
+                if (cols_to_exec[j].is_grouped)
+                    group[group_count++].spans.push_back(s);
             }
-            span left = cols_to_exec[0].spans[r[i].pos[0]];
-            span right = cols_to_exec[cols_to_exec.size() - 1].spans[r[i].pos[cols_to_exec.size() - 1]];
-            group[0].spans.push_back(span(span_value, left.from, right.to));
+            group[0].spans.push_back(span(span_value, cols_to_exec[0].spans[r[i].pos[0]].from, cols_to_exec[cols_to_exec.size() - 1].spans[r[i].pos[cols_to_exec.size() - 1]].to));
         }
         return group;
     }
