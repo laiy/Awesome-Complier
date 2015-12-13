@@ -67,7 +67,6 @@ void Parser::program() {
 }
 
 void Parser::aql_stmt() {
-    printf("testaqlstmt\n");
     if (this->look.type == CREATE)
         this->create_stmt();
     else
@@ -197,6 +196,10 @@ std::vector<col> Parser::extract_stmt() {
         std::string col_name = (extract_spec_v.size() == 5) ? extract_spec_v[4].value : extract_spec_v[5].value;
         std::string document = col_to_exec.spans[0].value;
         std::vector< std::vector<int> > result = findall(reg.c_str(), document.c_str());
+
+        std::cout << "regex size: " << result.size() << std::endl;
+        std::cout << "regex: " << reg << std::endl;
+
         std::vector<col> regex_spec_col_v;
         col regex_exec_result = col(col_name);
         for (int i = 0; (size_t)i < result.size(); i++) {
@@ -300,8 +303,6 @@ std::vector<col> Parser::extract_stmt() {
             span right = cols_to_exec[cols_to_exec.size() - 1].spans[r[i].pos[cols_to_exec.size() - 1]];
             group[0].spans.push_back(span(span_value, left.from, right.to));
         }
-        printf("pattern_return\n");
-        std::cout << group.size() << std::endl;
         return group;
     }
 }

@@ -7,21 +7,23 @@
 Lexer::Lexer(char *file_path) {
     Tokenizer tokenizer = Tokenizer(file_path);
     std::vector<document_token> document_tokens = tokenizer.get_tokens();
-    std::vector<std::string> tokens;
-    for (int i = 0; (size_t)i < document_tokens.size(); i++)
-        tokens.push_back(document_tokens[i].value);
     std::string buffer;
-    for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); it++) {
-        if (*it == "/") {
+    for (std::vector<document_token>::iterator it = document_tokens.begin(); it != document_tokens.end(); it++) {
+        if (it->value == "/") {
             buffer = "/";
-            it = tokens.erase(it);
-            while (*it != "/")
-                buffer += *it, it = tokens.erase(it);
+            int last_to = it->to, from = last_to - 1;
+            it = document_tokens.erase(it);
+            while (it->value != "/") {
+                while (last_to != it->from)
+                    buffer += ' ', last_to++;
+                buffer += it->value, last_to = it->to, it = document_tokens.erase(it);
+            }
+            int to = last_to + 1;
             buffer += "/";
-            it = tokens.erase(it);
-            it = tokens.insert(it, buffer);
+            it = document_tokens.erase(it);
+            it = document_tokens.insert(it, document_token(buffer, from, to));
         }
-        this->tokens.push_back(get_token(*it));
+        this->tokens.push_back(get_token(it->value));
     }
 }
 
