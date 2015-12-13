@@ -122,8 +122,6 @@ std::vector<col> Parser::select_stmt() {
     std::vector<token> select_list_v = this->select_list();
     this->match("from");
     std::vector<token> from_list_v = this->from_list();
-    // create cols with select_list_v and from_list_v and return a vector<col>
-    // todo
     std::vector<col> select_stmt_col_v;
     std::map<std::string, std::string> temp_to_origin_view_name;
     for (int i = 0; (size_t)i < from_list_v.size(); i += 2)
@@ -184,13 +182,10 @@ std::vector<col> Parser::extract_stmt() {
     std::vector<token> extract_spec_v = this->extract_spec();
     this->match("from");
     std::vector<token> from_list_v = this->from_list();
-    // create cols and return vector<col>
-    // todo
     std::map<std::string, std::string> temp_to_origin_view_name;
     for (int i = 0; (size_t)i < from_list_v.size(); i += 2)
         temp_to_origin_view_name[from_list_v[i + 1].value] = from_list_v[i].value;
     if (extract_spec_v[0].type == EMPTY) {
-        // regex
         std::string reg = extract_spec_v[1].value.substr(1, extract_spec_v[1].value.length() - 2);
         col col_to_exec = this->get_col(this->get_view(temp_to_origin_view_name[extract_spec_v[2].value]), extract_spec_v[3].value);
         std::string col_name = (extract_spec_v.size() == 5) ? extract_spec_v[4].value : extract_spec_v[5].value;
@@ -207,7 +202,6 @@ std::vector<col> Parser::extract_stmt() {
         regex_spec_col_v.push_back(regex_exec_result);
         return regex_spec_col_v;
     } else {
-        // pattern
         int look = 0;
         std::vector<col> cols_to_exec;
         while (extract_spec_v[look].type != EMPTY) {
@@ -241,9 +235,8 @@ std::vector<col> Parser::extract_stmt() {
                     regex_exec_result.is_grouped = true;
                 cols_to_exec.push_back(regex_exec_result);
                 look++;
-            } else {
+            } else
                 this->error("pattern match failed.");
-            }
         }
         std::vector<record> r;
         std::string document = this->get_col(this->get_view("Document"), "text").spans[0].value;
@@ -257,8 +250,8 @@ std::vector<col> Parser::extract_stmt() {
         }
         for (int i = 0; (size_t)i < cols_to_exec.size() - 1; i++) {
             std::vector<record> temp_record;
-            for (int j = 0; (size_t)j < cols_to_exec[i + 1].spans.size(); j++) {
-                for (int k = 0; (size_t)k < r.size(); k++) {
+            for (int j = 0; (size_t)j < cols_to_exec[i + 1].spans.size(); j++)
+                for (int k = 0; (size_t)k < r.size(); k++)
                     if (cols_to_exec[i + 1].spans[j].from == r[k].to) {
                         int temp = cols_to_exec[i + 1].spans[j].to;
                         while (document[temp] == ' ')
@@ -269,8 +262,6 @@ std::vector<col> Parser::extract_stmt() {
                         re.pos.push_back(j);
                         temp_record.push_back(re);
                     }
-                }
-            }
             r.clear();
             r.insert(r.end(), temp_record.begin(), temp_record.end());
         }
@@ -278,10 +269,9 @@ std::vector<col> Parser::extract_stmt() {
         std::vector<col> group;
         if (extract_spec_v[look].type == ID)
             group.push_back(col(extract_spec_v[look].value));
-        else {
+        else
             while ((size_t)look < extract_spec_v.size())
                 group.push_back(col(extract_spec_v[look + 1].value)), look += 2;
-        }
         for (int i = 0; (size_t)i < r.size(); i++) {
             int group_count = 1;
             std::string span_value;
