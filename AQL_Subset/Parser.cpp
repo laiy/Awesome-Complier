@@ -7,7 +7,6 @@
 #include <cstdlib>
 #include <map>
 #include <cstring>
-#include <algorithm>
 
 struct record {
     int to;
@@ -53,7 +52,6 @@ void Parser::error(std::string str) {
 
 void Parser::output_view(view v, token alias_name) {
     fprintf(this->output_file, "View: %s\n", (alias_name.type == EMPTY) ? v.name.c_str() : alias_name.value.c_str());
-    // std::sort(v.cols.begin(), v.cols.end());
     for (int i = 0; (size_t)i < v.cols.size(); i++) {
         int col_width = 0, temp;
         for (int j = 0; (size_t)j < v.cols[i].spans.size(); j++) {
