@@ -8,8 +8,8 @@ int main() {
     Lexer revenue_lexer = Lexer(revenue_aql_file_path);
     char Perloc[] = "../dataset/perloc/PerLoc.input";
     char Revenue[] = "../dataset/revenue/Revenue.input";
-    char perloc_output_file_path[] = "Perloc.output";
-    char revenue_output_file_path[] = "Revenue.output";
+    char perloc_output_file_path[] = "../dataset/Perloc.output";
+    char revenue_output_file_path[] = "../dataset/Revenue.output";
     Tokenizer tester1(Perloc);
     Tokenizer tester2(Revenue);
     Parser parser1(perloc_lexer, tester1, perloc_output_file_path, Perloc);
