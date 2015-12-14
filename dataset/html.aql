@@ -1,0 +1,45 @@
+create view meta as
+    extract regex /<meta\s*?.*?\/?>/
+        on D.text as meta
+    from Document D;
+
+create view script as
+    extract regex /<script\s*?.*?>\s*?.*?<\/script>/
+        on D.text as script
+    from Document D;
+
+create view ul as
+    extract regex /<ul\s*?.*?\/?>/
+        on D.text as ul
+    from Document D;
+
+create view link as
+    extract regex /<link\s*?.*?\/?>/
+        on D.text as link
+    from Document D;
+
+create view class as
+    extract regex /class/
+        on D.text as class
+    from Document D;
+
+create view value as
+    extract regex /"[^\n^\r]*?"/
+        on D.text as value
+    from Document D;
+
+create view classEqualValue as
+    extract pattern (<C.class>) /=/ (<V.value>)
+        return group 0 as classEqualValue
+            and group 1 as class
+            and group 2 as value
+    from class C, value V;
+
+output view meta;
+output view script;
+output view ul;
+output view link;
+output view class;
+output view value;
+output view classEqualValue;
+

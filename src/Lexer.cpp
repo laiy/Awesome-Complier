@@ -14,12 +14,13 @@ Lexer::Lexer(char *file_path) {
     for (std::vector<document_token>::iterator it = document_tokens.begin(); it != document_tokens.end(); it++) {
         if (it->value == "/") {
             buffer = "/";
+            std::string pre = "";
             int last_to = it->to, from = last_to - 1;
             it = document_tokens.erase(it);
-            while (it->value != "/") {
+            while (it->value != "/" || pre == "\\") {
                 while (last_to != it->from)
                     buffer += ' ', last_to++;
-                buffer += it->value, last_to = it->to, it = document_tokens.erase(it);
+                buffer += it->value, last_to = it->to, pre = it->value, it = document_tokens.erase(it);
             }
             int to = last_to + 1;
             buffer += "/";

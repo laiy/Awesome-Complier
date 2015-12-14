@@ -42,7 +42,7 @@ void Parser::match(std::string str) {
     if (this->look == get_token(str))
         this->look = this->scan();
     else
-        this->error("match failed.");
+        std::cout << str << std::endl, this->error("match failed.");
 }
 
 void Parser::error(std::string str) {
