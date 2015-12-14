@@ -2,3 +2,5 @@ perloc数据是很简单的, 可以用来简单的测试
 
 关于revenue的数据，在aql中创建的其中两个view：一个RevenueAndDivision，另一个RevenueAndDivision2。
 实际上应该合成一个view的，但是因为本子集的功能有限，针对不同的pattern但同一种提取信息，只好分开创建view并提取。
+
+html数据提取具体的html标签，然后进行拼接的实验(class="blablabla")，使用的测例是我github的首页和youtube的首页。
