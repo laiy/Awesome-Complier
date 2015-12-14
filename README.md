@@ -10,7 +10,7 @@ This compiler project is regarded as a nice teaching example of a compiler when 
 
 > The subset language of AQL, containing the create and output gramma.
 
-ql_stmt → create_stmt ; | output_stmt ;  
+aql_stmt → create_stmt ; | output_stmt ;  
 create_stmt → create view ID as view_stmt  
 view_stmt → select_stmt | extract_stmt  
 output_stmt → output view ID alias  
