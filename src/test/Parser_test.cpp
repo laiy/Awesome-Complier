@@ -31,3 +31,5 @@ int main() {
     return 0;
 }
 
+void exec_with_file_dic(Lexer lexer, char *dic_path) {
+}
