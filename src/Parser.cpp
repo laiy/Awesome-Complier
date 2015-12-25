@@ -50,6 +50,9 @@ void Parser::error(std::string str) {
     exit(2);
 }
 
+/*
+ * back-end output view logic.
+ */
 void Parser::output_view(view v, token alias_name) {
     fprintf(this->output_file, "View: %s\n", (alias_name.type == EMPTY) ? v.name.c_str() : alias_name.value.c_str());
     for (int i = 0; (size_t)i < v.cols.size(); i++) {
@@ -93,6 +96,9 @@ void Parser::create_stmt() {
     this->look = this->scan();
     this->match("as");
     std::vector<col> view_cols = this->view_stmt();
+    /*
+     * back-end create view logic.
+     */
     view v = view(view_name);
     v.cols = view_cols;
     this->views.push_back(v);
@@ -134,6 +140,9 @@ std::vector<col> Parser::select_stmt() {
     std::vector<token> select_list_v = this->select_list();
     this->match("from");
     std::vector<token> from_list_v = this->from_list();
+    /*
+     * back-end select logic come here.
+     */
     std::vector<col> select_stmt_col_v;
     std::map<std::string, std::string> temp_to_origin_view_name;
     for (int i = 0; (size_t)i < from_list_v.size(); i += 2)
@@ -198,6 +207,9 @@ std::vector<col> Parser::extract_stmt() {
     for (int i = 0; (size_t)i < from_list_v.size(); i += 2)
         temp_to_origin_view_name[from_list_v[i + 1].value] = from_list_v[i].value;
     if (extract_spec_v[0].type == EMPTY) {
+        /*
+         * back-end extract regex logic.
+         */
         std::string reg = extract_spec_v[1].value.substr(1, extract_spec_v[1].value.length() - 2);
         col col_to_exec = this->get_col(this->get_view(temp_to_origin_view_name[extract_spec_v[2].value]), extract_spec_v[3].value);
         std::string col_name = (extract_spec_v.size() == 5) ? extract_spec_v[4].value : extract_spec_v[5].value;
@@ -214,6 +226,9 @@ std::vector<col> Parser::extract_stmt() {
         regex_spec_col_v.push_back(regex_exec_result);
         return regex_spec_col_v;
     } else {
+        /*
+         * back-end extract pattern logic.
+         */
         int look = 0;
         std::vector<col> cols_to_exec;
         while (extract_spec_v[look].type != EMPTY) {

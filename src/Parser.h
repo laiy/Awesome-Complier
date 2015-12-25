@@ -22,9 +22,6 @@ struct col {
         this->name = name;
         this->is_grouped = false;
     }
-    bool operator<(const col &c) const {
-        return this->name < c.name;
-    }
 };
 
 struct view {
