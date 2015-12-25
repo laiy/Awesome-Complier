@@ -15,7 +15,7 @@ struct document_token {
 
 class Tokenizer {
     public:
-        Tokenizer(char *file_path);
+        Tokenizer(const char *file_path);
         std::vector<document_token> get_tokens();
         std::string get_text();
     private:

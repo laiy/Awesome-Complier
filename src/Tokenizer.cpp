@@ -3,7 +3,7 @@
 #include <string>
 #include "Tokenizer.h"
 
-Tokenizer::Tokenizer(char *file_path) {
+Tokenizer::Tokenizer(const char *file_path) {
     FILE *original_document = fopen(file_path, "r");
     int token_size_count = 0, pos = -1;
     char c;

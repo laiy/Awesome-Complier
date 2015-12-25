@@ -1,0 +1,67 @@
+Processing ../dataset/perloc/PerLoc.input
+View: Cap
++----------------------+
+| Cap                  |
++----------------------+
+| Carter:(0,6)         |
+| Plains:(12,18)       |
+| Georgia:(20,27)      |
+| Washington:(29,39)   |
+| Westmoreland:(45,57) |
+| Virginia:(59,67)     |
++----------------------+
+6 rows in set
+
+View: Stt
++--------------------+
+| Stt                |
++--------------------+
+| Georgia:(20,27)    |
+| Washington:(29,39) |
+| Virginia:(59,67)   |
++--------------------+
+3 rows in set
+
+View: Loc
++--------------------------------+----------------------+--------------------+
+| Loc                            | Cap                  | Stt                |
++--------------------------------+----------------------+--------------------+
+| Plains, Georgia:(12,27)        | Plains:(12,18)       | Georgia:(20,27)    |
+| Georgia, Washington:(20,39)    | Georgia:(20,27)      | Washington:(29,39) |
+| Westmoreland, Virginia:(45,67) | Westmoreland:(45,57) | Virginia:(59,67)   |
++--------------------------------+----------------------+--------------------+
+3 rows in set
+
+View: Per
++----------------------+
+| Per                  |
++----------------------+
+| Carter:(0,6)         |
+| Plains:(12,18)       |
+| Georgia:(20,27)      |
+| Washington:(29,39)   |
+| Westmoreland:(45,57) |
+| Virginia:(59,67)     |
++----------------------+
+6 rows in set
+
+View: PerLoc
++------------------------------------------------+--------------------+--------------------------------+
+| PerLoc                                         | Per                | Loc                            |
++------------------------------------------------+--------------------+--------------------------------+
+| Carter from Plains, Georgia:(0,27)             | Carter:(0,6)       | Plains, Georgia:(12,27)        |
+| Plains, Georgia, Washington:(12,39)            | Plains:(12,18)     | Georgia, Washington:(20,39)    |
+| Washington from Westmoreland, Virginia:(29,67) | Washington:(29,39) | Westmoreland, Virginia:(45,67) |
++------------------------------------------------+--------------------+--------------------------------+
+3 rows in set
+
+View: PerLocOnly
++------------------------------------------------+
+| PerLoc                                         |
++------------------------------------------------+
+| Carter from Plains, Georgia:(0,27)             |
+| Plains, Georgia, Washington:(12,39)            |
+| Washington from Westmoreland, Virginia:(29,67) |
++------------------------------------------------+
+3 rows in set
+
