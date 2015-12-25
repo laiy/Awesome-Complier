@@ -210,6 +210,8 @@ std::vector<col> Parser::extract_stmt() {
         /*
          * back-end extract regex logic.
          */
+        if (extract_spec_v.size() > 6)
+            this->error("semantic error.");
         std::string reg = extract_spec_v[1].value.substr(1, extract_spec_v[1].value.length() - 2);
         col col_to_exec = this->get_col(this->get_view(temp_to_origin_view_name[extract_spec_v[2].value]), extract_spec_v[3].value);
         std::string col_name = (extract_spec_v.size() == 5) ? extract_spec_v[4].value : extract_spec_v[5].value;
