@@ -30,8 +30,8 @@ create view value as
 
 create view classEqualValue as
     extract pattern (<C.class>) /=/ (<V.value>)
-        return group 0 as classEqualValue
-            and group 1 as class
+        return group 1 as class
+            and group 0 as classEqualValue
             and group 2 as value
     from class C, value V;
 

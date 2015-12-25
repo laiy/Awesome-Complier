@@ -353,6 +353,12 @@ std::vector<token> Parser::group_spec() {
         else
             break;
     }
+    std::map< int, std::string > value_table;
+    for (int i = 0; (size_t)i < group_spec_v.size(); i += 2)
+        value_table[atoi(group_spec_v[i].value.c_str())] = group_spec_v[i + 1].value;
+    int num_count = 0;
+    for (int i = 0; (size_t)i < group_spec_v.size(); i += 2)
+        group_spec_v[i].value = num_count, group_spec_v[i + 1].value = value_table[num_count++];
     return group_spec_v;
 }
 

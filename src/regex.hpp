@@ -815,23 +815,6 @@ findall(const char *regex, const char *content) {
     return result;
 }
 
-//int main()
-//{
-//    char regex[] = "([a-z]+)([^a-z]+)";
-//    char content[] = "ab2c1def3g12ui";
-//    vector<vector<int>> result;
-//    result = findall(regex, content);
-//    for (int i=0; i<result.size(); i++) {
-//        for (int j=result[i][0]; j<result[i][1]; j++)
-//            printf("%c", *(content+j));
-//        printf(": ");
-//        for (int j=0; j<result[0].size(); j+=2)
-//            printf("(%d,%d)", result[i][j], result[i][j+1]);
-//        printf("\n");
-//    }
-//    printf("\n");
-//}
-
 /*
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated
